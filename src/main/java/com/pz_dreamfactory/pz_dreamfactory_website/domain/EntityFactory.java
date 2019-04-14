@@ -10,7 +10,7 @@ public class EntityFactory {
         return new Visitor(ip, name);
     }
 
-    public static LikeLog likeLog(String ip, int id){
+    public static LikeLog creatLikeLog(String ip, int id){
         return new LikeLog(ip, id);
     }
 }

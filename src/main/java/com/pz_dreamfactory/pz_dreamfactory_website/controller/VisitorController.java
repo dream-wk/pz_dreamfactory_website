@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping(name = "visitor")
+@RequestMapping(value = "visitor")
 public class VisitorController {
     @Autowired
     private VisitorService visitorService;
 
-    @PostMapping(name = "get_name")
+    @PostMapping(value = "get_name")
     public HashMap getName(HttpServletRequest request){
         HashMap result = new HashMap();
         String ip = IpUtil.getIpAddr(request);
@@ -36,7 +36,7 @@ public class VisitorController {
         return result;
     }
 
-    @PostMapping(name = "add_vistor")
+    @PostMapping(value = "add_vistor")
     public HashMap addVistor(HttpServletRequest request, String name){
         HashMap result = new HashMap();
         String ip = IpUtil.getIpAddr(request);

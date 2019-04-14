@@ -19,7 +19,7 @@ public class LikeLogService {
      * @return  当点赞添加到日记中，返回true，否则返回false
      */
     public void addLike(String ip, int postId){
-        likeLogDao.save(EntityFactory.likeLog(ip, postId));
+        likeLogDao.save(EntityFactory.creatLikeLog(ip, postId));
     }
 
     /**

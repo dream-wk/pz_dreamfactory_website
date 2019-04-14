@@ -4,6 +4,11 @@ import javax.persistence.*;
 
 @Entity
 public class LikeLog {
+    @Id
+    @Column(name = "like_log_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(name = "ip")
     private String ip;
 
@@ -16,6 +21,10 @@ public class LikeLog {
     protected LikeLog(String ip, int postId) {
         this.ip = ip;
         this.postId = postId;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getIp() {

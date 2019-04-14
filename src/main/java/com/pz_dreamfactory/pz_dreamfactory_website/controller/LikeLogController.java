@@ -12,12 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping(name = "like_log")
+@RequestMapping(value = "like_log")
 public class LikeLogController {
     @Autowired
     private LikeLogService likeLogService;
 
-    @PostMapping(name = "get_like")
+    @PostMapping(value = "get_like")
     public HashMap count(int postId, HttpServletRequest request){
         HashMap result = new HashMap();
         String ip = IpUtil.getIpAddr(request);
@@ -30,7 +30,7 @@ public class LikeLogController {
         return result;
     }
 
-    @PostMapping(name = "add_like")
+    @PostMapping(value = "add_like")
     public HashMap addLike(int postId, HttpServletRequest request){
         String ip = IpUtil.getIpAddr(request);
         if(! likeLogService.isLike(ip, postId)){
