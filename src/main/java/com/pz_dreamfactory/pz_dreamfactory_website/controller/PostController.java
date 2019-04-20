@@ -27,10 +27,15 @@ public class PostController {
         result.put("blog_posts", null); // 存储post的数组
         result.put("page", null);   // 页码
         result.put("size", null);   // 表示页码中展示的数量
-        result.put("total_ages", null);   // 页码总数
+        result.put("total_pages", null);   // 页码总数
         return null;
     }
 
+    /**
+     *  按id返回博文
+     * @param id
+     * @return
+     */
     @PostMapping(value = "blog_post")
     public HashMap post(int id){
         HashMap result = new HashMap();
