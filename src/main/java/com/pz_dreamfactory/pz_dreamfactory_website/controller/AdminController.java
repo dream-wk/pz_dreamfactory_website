@@ -38,16 +38,17 @@ public class AdminController {
 
     /**
      * 编辑该用户的博主信息表
-     * @param name
-     * @param img
-     * @param 自我介绍
-     * @param motto
-     * @param personalExperience
-     * @param recommend
+     * @param name  名字
+     * @param img   图片
+     * @param selfIntroduction  自我介绍
+     * @param motto 座右铭
+     * @param personalExperience    个人简历
+     * @param recommend 建议
      * @return
      */
     @PostMapping(value = "edit_blogger")
-    public HashMap edit(String name, CommonsMultipartFile img, String 自我介绍, String motto, String personalExperience, String recommend){
+    public HashMap edit(String name, CommonsMultipartFile img, String selfIntroduction, String motto,
+                        String personalExperience, String recommend){
         HashMap result = new HashMap();
 
         result.put("blogger", null);
@@ -107,14 +108,13 @@ public class AdminController {
 
     /**
      * 博文目录
-     * @param bloggerName
-     * @param group
+     * @param blogger
      * @param page
      * @param size
      * @return
      */
     @PostMapping(value = "directory")
-    public HashMap directory(String bloggerName, int group, int page, int size){
+    public HashMap directory(int blogger, int page, int size){
         HashMap result = new HashMap();
 
         result.put("blog_posts", null); // 存储post的数组
