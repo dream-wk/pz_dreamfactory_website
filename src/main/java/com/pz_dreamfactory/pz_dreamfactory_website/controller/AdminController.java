@@ -64,7 +64,7 @@ public class AdminController {
      * @return 返回博文
      */
     @PostMapping(value = "add_post")
-    public HashMap addPost(String type, String title, String synopsis, String context){
+    public HashMap addPost(int type, String title, String synopsis, String context){
         HashMap result = new HashMap();
 
          result.put("blog_post", null);

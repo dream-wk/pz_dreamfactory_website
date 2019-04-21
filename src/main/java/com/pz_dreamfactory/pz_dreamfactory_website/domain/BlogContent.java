@@ -20,6 +20,10 @@ public class BlogContent {
         this.content = content;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getContent() {
         return content;
     }

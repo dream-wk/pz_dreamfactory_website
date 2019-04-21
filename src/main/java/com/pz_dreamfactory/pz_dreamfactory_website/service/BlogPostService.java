@@ -3,6 +3,7 @@ package com.pz_dreamfactory.pz_dreamfactory_website.service;
 import com.pz_dreamfactory.pz_dreamfactory_website.dao.BlogPostDao;
 import com.pz_dreamfactory.pz_dreamfactory_website.domain.BlogContent;
 import com.pz_dreamfactory.pz_dreamfactory_website.domain.BlogPost;
+import com.pz_dreamfactory.pz_dreamfactory_website.domain.EntityFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +55,29 @@ public class BlogPostService {
         BlogContent blogContent = mongoTemplate.findById(blogPost.getMongdbKey(), BlogContent.class);
         result.put("blog_post_content", blogContent.getContent());
 
+        return result;
+    }
+
+    public BlogPost addPost(int bloggerId, int type, String title, String synopsis, String context){
+        BlogContent blogContent = EntityFactory.createBlogContent(context);
+        blogContent = mongoTemplate.save(blogContent);
+
+        BlogPost blogPost = EntityFactory.createBlogPost(bloggerId, type, title, synopsis, blogContent.getId());
+        blogPost = blogPostDao.save(blogPost);
+        return blogPost;
+    }
+
+    public void setPostAlive(int id, boolean alive){
+        blogPostDao.updateAlive(id, alive);
+    }
+
+    public void setPostCanComment(int id, boolean canComment){
+        blogPostDao.updateCanComment(id, canComment);
+    }
+
+    public Page<BlogPost> directoryAllByBloggerId(int bloggerId, int page, int size){
+        Pageable pageable = PageRequest.of(page, size, sortByDate);
+        Page<BlogPost> result = blogPostDao.findAllByBloggerfId(bloggerId, pageable);
         return result;
     }
 }
