@@ -5,7 +5,10 @@ import com.pz_dreamfactory.pz_dreamfactory_website.domain.Blogger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,7 +21,7 @@ public interface BlogPostDao extends JpaRepository<BlogPost, Integer> {
     @Query(nativeQuery = true,
             value = "select p.*, b.blogger_name from blog_post p, blogger b " +
                     "where p.blog_post_id = ?1 and p.blogger_fid = b.blogger_id and p.is_alive = true;")
-    public BlogPost findByIdAndLAndAliveTrue(int id);
+    public BlogPost findByIdLAndAliveTrue(int id);
 
     /**
      * 通过 字段 查询类似字段的作者名的存活的博文目录
@@ -27,9 +30,9 @@ public interface BlogPostDao extends JpaRepository<BlogPost, Integer> {
      * @return
      */
     @Query(nativeQuery = true,
-        value = "select p.*, b.blogger_name from blog_post p, blogger b " +
-                "where b.blogger_name like ?1 and p.blogger_fid = b.blogger_id and p.is_alive = true;" +
-                "\n#pageable\n")
+            value = "select p.*, b.blogger_name from blog_post p, blogger b " +
+                    "where b.blogger_name like ?1 and p.blogger_fid = b.blogger_id and p.is_alive = true;" +
+                    "\n#pageable\n")
     public Page<BlogPost> findAllByBloggerNameLikeAndAliveTrue(String s1, Pageable pageable);
 
     /**
@@ -73,5 +76,25 @@ public interface BlogPostDao extends JpaRepository<BlogPost, Integer> {
                     "where b.bloger_fid = ?1 and p.blogger_fid = b.blogger_id and p.is_alive = true;" +
                     "\n#pageable\n")
     public Page<BlogPost> findAllByBloggerfId(int id, Pageable pageable);
-    
+
+    /**
+     * 修改 is_live 属性
+     * @param id
+     * @param alive
+     */
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true,
+            value = "update blog_post p set p.is_alive = ?2 where p.blog_post_id = ?1 ;")
+    public void updateAlive(int id, boolean alive);
+
+    /**
+     * 修改 can_comment 属性
+     * @param id
+     * @param canComment
+     */
+    @Transactional
+    @Query(nativeQuery = true,
+            value = "update blog_post p set p.can_comment = ?2 where p.blog_post_id = ?1 ;")
+    public void updateCanComment(int id, boolean canComment);
 }

@@ -23,9 +23,6 @@ public class BlogPostDaoTest {
 
     @Test
     public void test2(){
-        Pageable pageable = PageRequest.of(0, 2);
-        Page<BlogPost> b1 = blogPostDao.findAllByBloggerNameLikeAndAliveTrue("%g%", pageable);
-        assertEquals(1, b1.getTotalElements());
-        assertEquals("blogger", b1.getContent().get(0).getBloggerName());
+        blogPostDao.updateAlive(1, true);
     }
 }

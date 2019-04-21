@@ -1,7 +1,10 @@
 package com.pz_dreamfactory.pz_dreamfactory_website.domain;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class BlogContent {
