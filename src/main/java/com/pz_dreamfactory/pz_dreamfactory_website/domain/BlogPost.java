@@ -5,6 +5,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "blog_post")
+@SecondaryTable(name = "blogger")
 public class BlogPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,9 @@ public class BlogPost {
 
     @Column(name = "can_comment")
     private boolean canComment;
+
+    @Column(name = "blogger_name", table = "blogger", insertable = false, updatable = false)
+    private String bloggerName;
 
     private BlogPost() {
     }
@@ -118,4 +122,7 @@ public class BlogPost {
         this.canComment = canComment;
     }
 
+    public String getBloggerName() {
+        return bloggerName;
+    }
 }
