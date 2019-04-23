@@ -67,8 +67,8 @@ public class AdminController {
     public HashMap addPost(int type, String title, String synopsis, String context){
         HashMap result = new HashMap();
 
-         result.put("blog_post", null);
-         return result;
+        result.put("blog_post", null);
+        return result;
     }
 
     /**
@@ -114,7 +114,7 @@ public class AdminController {
      * @return
      */
     @PostMapping(value = "directory")
-    public HashMap directory(int blogger, int page, int size){
+    public HashMap directory(int page, int size){
         HashMap result = new HashMap();
 
         result.put("blog_posts", null); // 存储post的数组

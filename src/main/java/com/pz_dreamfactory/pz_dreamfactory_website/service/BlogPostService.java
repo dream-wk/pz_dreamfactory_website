@@ -25,7 +25,7 @@ public class BlogPostService {
     public static final Sort sortByDate = Sort.by(Sort.Direction.DESC, "reportDate");
 
     public Page<BlogPost> directoryByAlive(String bloggerName, int group, int page, int size){
-        Pageable pageable = PageRequest.of(page, size, sortByDate);
+        Pageable pageable = PageRequest.of(page - 1, size, sortByDate);
         Page<BlogPost> reslut;
 
         if(bloggerName != null && group > 0){
@@ -38,6 +38,12 @@ public class BlogPostService {
             reslut = blogPostDao.findAllByAliveTrue(pageable);
         }
 
+        return reslut;
+    }
+
+    public Page<BlogPost> directoryByBloggerIdAndAlive(int bloggerId, int page, int size){
+        Pageable pageable = PageRequest.of(page - 1, size, sortByDate);
+        Page<BlogPost> reslut = blogPostDao.findAllByBloggerfIdAndAliveTrue(bloggerId, pageable);
         return reslut;
     }
 
@@ -76,7 +82,7 @@ public class BlogPostService {
     }
 
     public Page<BlogPost> directoryAllByBloggerId(int bloggerId, int page, int size){
-        Pageable pageable = PageRequest.of(page, size, sortByDate);
+        Pageable pageable = PageRequest.of(page - 1, size, sortByDate);
         Page<BlogPost> result = blogPostDao.findAllByBloggerfId(bloggerId, pageable);
         return result;
     }
