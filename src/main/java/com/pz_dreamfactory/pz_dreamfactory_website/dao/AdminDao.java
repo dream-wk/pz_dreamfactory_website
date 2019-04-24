@@ -2,6 +2,7 @@ package com.pz_dreamfactory.pz_dreamfactory_website.dao;
 
 import com.pz_dreamfactory.pz_dreamfactory_website.domain.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +12,10 @@ public interface AdminDao extends JpaRepository<Admin, Integer> {
     public Admin findByUserNameAndPassword(String userNaem, String password);
 
     @Transactional
+    @Modifying
     @Query(nativeQuery = true,
         value = "update admin a set a.user_password = ?1 and a.admin_id = ? 2 ;")
     public void updataByPassword(String password, int id);
+
+    public int countAdminByUserName(String userName);
 }

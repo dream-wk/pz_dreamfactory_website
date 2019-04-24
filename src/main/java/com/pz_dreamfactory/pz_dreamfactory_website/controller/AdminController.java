@@ -1,15 +1,27 @@
 package com.pz_dreamfactory.pz_dreamfactory_website.controller;
 
+import com.pz_dreamfactory.pz_dreamfactory_website.dao.AdminDao;
+import com.pz_dreamfactory.pz_dreamfactory_website.domain.Admin;
+import com.pz_dreamfactory.pz_dreamfactory_website.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
 @RequestMapping(value = "/admin")
 @RestController
 public class AdminController {
+
+    final static int KEEP_LOGIN_SESSION_TIME = 60 * 60 * 3;
+
+    @Autowired
+    AdminService adminService;
 
     /**
      * 用户注册
@@ -18,10 +30,15 @@ public class AdminController {
      * @return  注册成功—> 登陆 注册失败—> 返回信息
      */
     @RequestMapping(value = "registered")
-    public HashMap registered(String userName, String password){
+    public HashMap registered(String userName, String password, HttpServletRequest request){
         HashMap resulut = new HashMap();
 
-        resulut.put("core", null);
+        HashMap registered = adminService.registered(userName, password);
+        if((boolean) registered.get("successfylly_registered")){
+            updataLoginStatus(request);
+        }
+
+        resulut.putAll(registered);
         return resulut;
     }
 
@@ -32,8 +49,20 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value = "login")
-    public HashMap login(String userName, String password){
-        return null;
+    public HashMap login(String userName, String password, HttpServletRequest request){
+        HashMap result = new HashMap();
+
+        Admin user = adminService.login(userName, password);
+
+        if(user != null){
+            updataLoginStatus(request);
+            result.put("successfylly_login", true);
+            result.put("user", user);
+        }else {
+            result.put("successfylly_login", false);
+        }
+
+        return result;
     }
 
     /**
@@ -122,5 +151,28 @@ public class AdminController {
         result.put("size", null);   // 表示页码中展示的数量
         result.put("total_pages", null);   // 页码总数
         return null;
+    }
+
+    /**
+     * 检查Session 中是否存在登陆状态，没有返回falsh 有则延长状态存活时间。
+     * @param request
+     * @return
+     */
+    private boolean isLoginStatus(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        String loginStatus = (String) session.getAttribute("login_status");
+
+        if(loginStatus == null){
+            return false;
+        }
+        session.setAttribute("login_status", loginStatus);
+        session.setMaxInactiveInterval(KEEP_LOGIN_SESSION_TIME);
+        return true;
+    }
+
+    private void updataLoginStatus(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        session.setAttribute("login_status", "true");
+        session.setMaxInactiveInterval(KEEP_LOGIN_SESSION_TIME);
     }
 }
