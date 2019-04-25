@@ -35,7 +35,8 @@ public class AdminController {
 
         HashMap registered = adminService.registered(userName, password);
         if((boolean) registered.get("successfylly_registered")){
-            updataLoginStatus(request);
+            Admin user = (Admin) registered.get("user");
+            updataLoginStatus(request, user.getId(), user.getBloggerId());
         }
 
         resulut.putAll(registered);
@@ -55,7 +56,7 @@ public class AdminController {
         Admin user = adminService.login(userName, password);
 
         if(user != null){
-            updataLoginStatus(request);
+            updataLoginStatus(request, user.getId(), user.getBloggerId());
             result.put("successfylly_login", true);
             result.put("user", user);
         }else {
@@ -172,7 +173,15 @@ public class AdminController {
 
     private void updataLoginStatus(HttpServletRequest request){
         HttpSession session = request.getSession();
-        session.setAttribute("login_status", "true");
+        session.setAttribute("login_status", session.getAttribute("login_status"));
+        session.setAttribute("blogger", session.getAttribute("blogger"));
+        session.setMaxInactiveInterval(KEEP_LOGIN_SESSION_TIME);
+    }
+
+    private void updataLoginStatus(HttpServletRequest request, int adminId, int bloggerId){
+        HttpSession session = request.getSession();
+        session.setAttribute("login_status", adminId);
+        session.setAttribute("blogger", bloggerId);
         session.setMaxInactiveInterval(KEEP_LOGIN_SESSION_TIME);
     }
 }
