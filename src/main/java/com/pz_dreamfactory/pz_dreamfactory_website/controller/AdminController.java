@@ -2,8 +2,13 @@ package com.pz_dreamfactory.pz_dreamfactory_website.controller;
 
 import com.pz_dreamfactory.pz_dreamfactory_website.dao.AdminDao;
 import com.pz_dreamfactory.pz_dreamfactory_website.domain.Admin;
+import com.pz_dreamfactory.pz_dreamfactory_website.domain.BlogPost;
+import com.pz_dreamfactory.pz_dreamfactory_website.domain.Blogger;
 import com.pz_dreamfactory.pz_dreamfactory_website.service.AdminService;
+import com.pz_dreamfactory.pz_dreamfactory_website.service.BlogPostService;
+import com.pz_dreamfactory.pz_dreamfactory_website.service.BloggerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +27,10 @@ public class AdminController {
 
     @Autowired
     AdminService adminService;
+    @Autowired
+    BloggerService bloggerService;
+    @Autowired
+    BlogPostService blogPostService;
 
     /**
      * 用户注册
@@ -68,6 +77,7 @@ public class AdminController {
 
     /**
      * 编辑该用户的博主信息表
+     * TODO 上传和保存图片技术未实现
      * @param name  名字
      * @param img   图片
      * @param selfIntroduction  自我介绍
@@ -94,15 +104,18 @@ public class AdminController {
      * @return 返回博文
      */
     @PostMapping(value = "add_post")
-    public HashMap addPost(int type, String title, String synopsis, String context){
+    public HashMap addPost(HttpServletRequest request, int type, String title, String synopsis, String context){
         HashMap result = new HashMap();
 
-        result.put("blog_post", null);
+        int bloggerId = (int) request.getSession().getAttribute("blogger");
+        BlogPost post = blogPostService.addPost(bloggerId, type, title, synopsis, context);
+        result.put("blog_post", post);
         return result;
     }
 
     /**
      * 删除评论
+     * TODO 等待评论模块完成
      * @param ids
      * @return
      */
@@ -122,7 +135,11 @@ public class AdminController {
      */
     @PostMapping(value = "set_display_blog_post")
     public HashMap SetDisplayBlogPost(int id, boolean display){
-        return null;
+        blogPostService.setPostAlive(id, display);
+        HashMap result = new HashMap();
+        result.put("core", 200);
+
+        return result;
     }
 
     /**
@@ -133,25 +150,32 @@ public class AdminController {
      */
     @PostMapping(value = "set_comment_blog_post")
     public HashMap setCommentBlogPost(int id, boolean canCommnent){
-        return null;
+        HashMap result = new HashMap();
+        blogPostService.setPostCanComment(id, canCommnent);
+
+        result.put("core", 200);
+        return result;
     }
 
     /**
      * 博文目录
-     * @param blogger
+     * @param request
      * @param page
      * @param size
      * @return
      */
     @PostMapping(value = "directory")
-    public HashMap directory(int page, int size){
+    public HashMap directory(HttpServletRequest request, int page, int size){
         HashMap result = new HashMap();
 
-        result.put("blog_posts", null); // 存储post的数组
-        result.put("page", null);   // 页码
-        result.put("size", null);   // 表示页码中展示的数量
-        result.put("total_pages", null);   // 页码总数
-        return null;
+        int bloggerId = (int) request.getSession().getAttribute("blogger");
+        Page<BlogPost> posts = blogPostService.directoryAllByBloggerId(bloggerId, page, size);
+
+        result.put("blog_posts", posts.getContent()); // 存储post的数组
+        result.put("page", posts.getNumber());   // 页码
+        result.put("size", posts.getNumberOfElements());   // 表示页码中展示的数量
+        result.put("total_pages", posts.getTotalPages());   // 页码总数
+        return result;
     }
 
     /**
@@ -171,6 +195,10 @@ public class AdminController {
         return true;
     }
 
+    /**
+     * 向Session中延长登陆状态的存活时间
+     * @param request
+     */
     private void updataLoginStatus(HttpServletRequest request){
         HttpSession session = request.getSession();
         session.setAttribute("login_status", session.getAttribute("login_status"));
@@ -178,6 +206,12 @@ public class AdminController {
         session.setMaxInactiveInterval(KEEP_LOGIN_SESSION_TIME);
     }
 
+    /**
+     * 向Session 中添加新的 登陆状态
+     * @param request
+     * @param adminId
+     * @param bloggerId
+     */
     private void updataLoginStatus(HttpServletRequest request, int adminId, int bloggerId){
         HttpSession session = request.getSession();
         session.setAttribute("login_status", adminId);

@@ -19,6 +19,7 @@ public class EntityFactory {
     public static BlogContent createBlogContent(String content){
         return new BlogContent(content);
     }
+
     public static Admin createAdmin(String userName, String password){
         java.util.Date date = new java.util.Date();
         Admin admin = new Admin(1, date, userName);
