@@ -78,6 +78,9 @@ public class AdminController {
     /**
      * 编辑该用户的博主信息表
      * TODO 上传和保存图片技术未实现
+     * 从session 中取到登陆状态下的管理员id 和 关联的博主id
+     * 如果没有博主id， 就为其创建一个 关联的博主信息
+     * 当传入的值为null（没有传入） 则表示对应的信息不更新
      * @param name  名字
      * @param img   图片
      * @param selfIntroduction  自我介绍
